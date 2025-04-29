@@ -1,16 +1,32 @@
-# pomodoro
+# ⏱️ Pomodoro Productivity App
 
-A new Flutter project.
+A mobile app for individuals and teams to boost focus using the **Pomodoro Technique**. Built with Flutter, `BLoC` for state management, and `go_router` for navigation.
 
-## Getting Started
+## 📦 Features
 
-This project is a starting point for a Flutter application.
+### 🗂️ Projects & Tasks
+- Create and manage **projects**
+- Organize tasks under each project
+- Work **solo** or **collaborate** with others in real time
 
-A few resources to get you started if this is your first Flutter project:
+### ⏲️ Pomodoro Timer
+- Fully functional Pomodoro timer
+- Standard intervals (25 work / 5 short break / 15 long break)
+- Visual timer UI and sound/vibration cues
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 📊 Statistics
+- View **daily, weekly, and monthly productivity**
+- Breakdown of session count, task focus, and active time
+- Basic **suggestions** for productivity improvement
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tech Stack
+
+- **Flutter** (cross-platform UI)
+- **BLoC** (state management)
+- **go_router** (navigation)
+- **Firebase** (auth & backend)
+
+## 📄 License
+
+MIT License
+

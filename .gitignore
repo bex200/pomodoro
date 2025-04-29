@@ -22,6 +22,48 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+# Flutter/Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos/
+.metadata
+build/
+.pub-cache/
+.pub/
+generated_plugin_registrant.*
+
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# iOS/macOS
+ios/Pods/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/.symlinks/
+ios/Runner.xcworkspace/
+ios/build/
+macos/Pods/
+macos/build/
+macos/Runner.xcworkspace/
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/xcshareddata/xcschemes/
+*.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+*.xcuserstate
+
+# Linux/Windows
+linux/flutter/ephemeral/
+linux/build/
+windows/flutter/ephemeral/
+windows/build/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/

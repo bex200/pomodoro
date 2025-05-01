@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pomodoro/core/themes/app_theme.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_state.dart';
 
 class ProjectsHomeScreen extends StatelessWidget {
   const ProjectsHomeScreen({super.key});
@@ -36,6 +40,14 @@ class ProjectsHomeScreen extends StatelessWidget {
               const SizedBox(
                 height: 24,
               ),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  return ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(SignOutEvent());
+                      }, child: Text('Temp LOGOUT'));
+                },
+              ),
               Form(
                 child: TextFormField(
                   decoration: InputDecoration(
@@ -63,19 +75,14 @@ class ProjectsHomeScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Scrollbar(
-                     
                   thickness: 0.7,
                   child: CustomScrollView(
                     slivers: [
                       SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
                         return GestureDetector(
-                          onTap: () {
-                            debugPrint(
-                                'Card theme color: ${Theme.of(context).cardTheme.color}');
-                            debugPrint(
-                                'Card theme color: ${Theme.of(context).cardTheme.clipBehavior}');
-                          },
+                          onTap: () {},
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: Card(
@@ -92,7 +99,8 @@ class ProjectsHomeScreen extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 12),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           mainAxisAlignment:
@@ -100,15 +108,16 @@ class ProjectsHomeScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               'B2B Plaform',
-                                              style:
-                                                  TextTheme.of(context).labelMedium,
+                                              style: TextTheme.of(context)
+                                                  .labelMedium,
                                             ),
                                             Text(
                                               '4 tasks',
                                               style: TextTheme.of(context)
                                                   .bodySmall!
                                                   .copyWith(
-                                                      color: AppColors.primary400),
+                                                      color:
+                                                          AppColors.primary400),
                                             )
                                           ],
                                         ),
@@ -119,15 +128,26 @@ class ProjectsHomeScreen extends StatelessWidget {
                                           'Apr 28, 2025',
                                           style: TextTheme.of(context)
                                               .bodySmall!
-                                              .copyWith(color: AppColors.n600),
+                                              .copyWith(
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? AppColors.n600
+                                                      : AppColors.n300),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 12),
+                                          padding:
+                                              const EdgeInsets.only(top: 12),
                                           child: Text(
                                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed pharetra nisi. Vivamus',
                                             style: TextTheme.of(context)
                                                 .bodySmall!
-                                                .copyWith(color: AppColors.n600),
+                                                .copyWith(
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.light
+                                                        ? AppColors.n600
+                                                        : AppColors.n300),
                                           ),
                                         )
                                       ],
@@ -147,7 +167,6 @@ class ProjectsHomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      
     );
   }
 }

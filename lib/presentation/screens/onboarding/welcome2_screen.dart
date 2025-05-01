@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodoro/core/themes/app_theme.dart';
+import 'package:pomodoro/data/repositories/onboarding/onboarding_repository.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
 import 'package:pomodoro/presentation/screens/onboarding/welcome1_screen.dart';
 import 'package:pomodoro/presentation/widgets/common/page_indicators.dart';
 
@@ -78,10 +82,11 @@ class Welcome2Screen extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 48,
-            margin:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 22),
             child: ElevatedButton(
-                onPressed: () => context.go('/register'),
+                onPressed: () async {
+                  context.read<AuthBloc>().add(Welcome2PassEvent());
+                },
                 child: Text(
                   AppLocalizations.of(context)!.readyButton,
                   style: TextTheme.of(context).labelLarge,

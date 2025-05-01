@@ -150,7 +150,6 @@ class AppThemes {
         ),
         elevation: 10,
       ),
-      shadowColor: AppColors.skeletonGray,
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: ButtonStyle(
               foregroundColor: const WidgetStatePropertyAll(AppColors.n900),
@@ -229,11 +228,10 @@ class AppThemes {
       primaryColor: AppColors.primary1000,
       scaffoldBackgroundColor: AppColors.black,
       cardColor: AppColors.white,
-      shadowColor: AppColors.skeletonGray,
       cardTheme: CardTheme(
         clipBehavior: Clip.hardEdge,
         margin: const EdgeInsets.only(bottom: 16),
-        shadowColor: AppColors.skeletonGray,
+        shadowColor: AppColors.n800, //?QUESTIONABLE? Maybe no need
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         elevation: 10,
       ),

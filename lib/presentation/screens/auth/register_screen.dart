@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodoro/core/themes/app_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pomodoro/core/utils/form_validators.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  @override
   Widget build(BuildContext context) {
-    bool isChecked = false;
+    bool _isObscure = true; // For password visibility toggle
+
+    TextEditingController emailController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -63,6 +76,7 @@ class RegisterScreen extends StatelessWidget {
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Form(
+                          key: _formKey,
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -74,7 +88,13 @@ class RegisterScreen extends StatelessWidget {
                                   height: 6,
                                 ),
                                 TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
+                                  controller: emailController,
                                   style: TextTheme.of(context).labelMedium,
+                                  validator: (value) {
+                                    return FormValidators.emailValidator(
+                                        value, context);
+                                  },
                                   onTapOutside: (event) =>
                                       FocusScope.of(context).unfocus(),
                                   decoration: InputDecoration(
@@ -96,13 +116,26 @@ class RegisterScreen extends StatelessWidget {
                                   height: 6,
                                 ),
                                 TextFormField(
+                                  obscureText: _isObscure,
+                                  controller: passwordController,
                                   style: TextTheme.of(context).labelMedium,
+                                  validator: (value) {
+                                    return FormValidators.passwordValidator(
+                                        value, context);
+                                  },
                                   onTapOutside: (event) =>
                                       FocusScope.of(context).unfocus(),
                                   decoration: InputDecoration(
-                                      suffixIcon: const Icon(
-                                        Icons.remove_red_eye_outlined,
-                                        size: 20,
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _isObscure
+                                              ? Icons.visibility_off
+                                              : Icons.visibility,
+                                          size: 20,
+                                        ),
+                                        onPressed: () => setState(() {
+                                          _isObscure = !_isObscure;
+                                        }),
                                       ),
                                       hintText: AppLocalizations.of(context)!
                                           .password,
@@ -114,47 +147,37 @@ class RegisterScreen extends StatelessWidget {
                                 const SizedBox(
                                   height: 12,
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                  children: [
-                                    Checkbox(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      splashRadius: 0,
-                                      value: isChecked,
-                                      side: const BorderSide(
-                                          color: AppColors.n600, width: 1.25),
-                                      onChanged: (value) => {},
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16),
+                                  child: TapRegion(
+                                    onTapInside: (event) =>
+                                        {print('Tapped Agree to terms!')},
+                                    child: Text(
+                                      textAlign: TextAlign.center,
+                                      AppLocalizations.of(context)!
+                                          .agreeToTerms,
+                                      style: TextTheme.of(context)
+                                          .bodySmall!
+                                          .copyWith(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontWeight: FontWeight.w500),
                                     ),
-                                    TapRegion(
-                                      onTapInside: (event) =>
-                                          {print('Tapped Agree to terms!')},
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .agreeToTerms,
-                                        style: TextTheme.of(context)
-                                            .bodySmall!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w500),
-                                      ),
-                                    )
-                                  ],
+                                  ),
                                 ),
                                 SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                            0.01),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.01),
                                 const Divider(),
                                 SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height *
-                                            0.01),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.01),
                                 SizedBox(
                                   width: double.infinity,
                                   child: OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      //* IMPLEMENT that later when ill need
+                                    },
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -162,11 +185,11 @@ class RegisterScreen extends StatelessWidget {
                                           alignment: Alignment.centerLeft,
                                           child: Icon(
                                             FontAwesomeIcons.apple,
-                                            color: Theme.of(context)
-                                                        .brightness ==
-                                                    Brightness.light
-                                                ? AppColors.n900
-                                                : AppColors.white,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? AppColors.n900
+                                                    : AppColors.white,
                                             size: 24,
                                           ),
                                         ),
@@ -186,7 +209,11 @@ class RegisterScreen extends StatelessWidget {
                                 SizedBox(
                                   width: double.infinity,
                                   child: OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      context
+                                          .read<AuthBloc>()
+                                          .add(SignInWithGoogleEvent());
+                                    },
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -219,7 +246,16 @@ class RegisterScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                                onPressed: () => context.go('/home'),
+                                onPressed: () {
+                                  if (_formKey.currentState?.validate() ??
+                                      false) {
+                                    context.read<AuthBloc>().add(
+                                        SignUpWithEmailEvent(
+                                            email: emailController.text.trim(),
+                                            password: passwordController.text
+                                                .trim()));
+                                  }
+                                },
                                 child: Text(
                                   AppLocalizations.of(context)!.signupButton,
                                 )),
@@ -234,18 +270,17 @@ class RegisterScreen extends StatelessWidget {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!.haveAnAccount,
-                                style: TextTheme.of(context)
-                                    .labelLarge!
-                                    .copyWith(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.n900
-                                          : AppColors.white,
-                                    ),
+                                style:
+                                    TextTheme.of(context).labelLarge!.copyWith(
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? AppColors.n900
+                                              : AppColors.white,
+                                        ),
                               ),
                               TextButton(
                                 onPressed: () {
-                                  context.go('/login');
+                                  context.push('/login');
                                 },
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
@@ -254,8 +289,8 @@ class RegisterScreen extends StatelessWidget {
                                   tapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
                                 ).copyWith(
-                                  padding: WidgetStateProperty.all(
-                                      EdgeInsets.zero),
+                                  padding:
+                                      WidgetStateProperty.all(EdgeInsets.zero),
                                 ),
                                 child: Text(
                                   AppLocalizations.of(context)!.signinButton,

@@ -1,32 +1,69 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:pomodoro/core/navigation/router.dart';
 import 'package:pomodoro/core/themes/app_theme.dart';
-import 'package:pomodoro/logic/blocs/onboarding/splash/splash_bloc.dart';
-import 'package:pomodoro/presentation/screens/onboarding/splash_screen.dart';
+import 'package:pomodoro/data/repositories/auth_repository_impl.dart';
+import 'package:pomodoro/firebase_options.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
 
-void main() {
-  runApp(const PomoApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize dependencies here
+  final authRepository = AuthRepositoryImpl();
+  final authBloc = AuthBloc(authRepository);
+  authBloc.add(AppStarted());
+  final AppRouter appRouter = AppRouter(authBloc: authBloc);
+
+  runApp(PomoApp(authBloc: authBloc, appRouter: appRouter));
 }
 
-class PomoApp extends StatelessWidget {
-  const PomoApp({super.key});
+class PomoApp extends StatefulWidget {
+  final AuthBloc authBloc;
+  final AppRouter appRouter;
 
-  // This widget is the root of your application.
+  const PomoApp({super.key, required this.authBloc, required this.appRouter});
+
+  @override
+  State<PomoApp> createState() => _PomoAppState();
+}
+
+class _PomoAppState extends State<PomoApp> {
+  @override
+  void initState() {
+    super.initState();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent, // blend in
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness:
+            isDark ? Brightness.light : Brightness.dark,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<SplashBloc>(
-          create: (_) => SplashBloc()..add(AppStarted()),
+        BlocProvider<AuthBloc>.value(
+          value: widget.authBloc,
         ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         locale: Locale('en'),
-        routerConfig: appRouter,
+        routerConfig: widget.appRouter.router,
         supportedLocales: const [
           Locale('en', 'US'),
           Locale('ru', 'RU'),

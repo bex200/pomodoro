@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pomodoro/core/themes/app_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
+import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
 import 'package:pomodoro/presentation/screens/onboarding/welcome2_screen.dart';
 import 'package:pomodoro/presentation/widgets/common/page_indicators.dart';
 
@@ -15,6 +18,7 @@ class Welcome1Screen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -80,7 +84,9 @@ class Welcome1Screen extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: () => context.go('/welcome2'),
+                onPressed: () {
+                  context.push('/welcome2');
+                },
                 child: Text(
                   AppLocalizations.of(context)!.nextButton,
                   style: TextTheme.of(context).labelLarge,

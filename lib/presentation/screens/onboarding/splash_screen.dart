@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pomodoro/logic/blocs/onboarding/splash/splash_bloc.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<SplashBloc, SplashState>(
-      listenWhen: (previous, current) =>
-          current is SplashNavigateToHome ||
-          current is SplashNavigateToOnboarding,
-      listener: (context, state) {
-        if (state is SplashNavigateToHome) {
-          print(state);
-          context.go('/home');
-        } else if (state is SplashNavigateToOnboarding) {
-          print(state);
+  State<SplashScreen> createState() => _SplashScreenState();
+}
 
-          context.go('/welcome1');
-        }
-      },
-      child: Scaffold(
-        body: Center(
-            child: Column(
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 5), () {
+      print('waiting for 2 secs');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
@@ -34,10 +30,10 @@ class SplashScreen extends StatelessWidget {
             ),
             Text(
               'Pomo',
-              style: TextTheme.of(context).displayLarge,
+              style: Theme.of(context).textTheme.displayLarge,
             ),
           ],
-        )),
+        ),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pomodoro/core/utils/form_validators.dart';
 import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
 import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
+import 'package:pomodoro/presentation/widgets/common/gradient_loading_indicator.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -16,13 +17,22 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool _isObscure = true; // For password visibility toggle
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    // Clean up controllers when the widget is disposed
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool _isObscure = true; // For password visibility toggle
-
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-    GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
@@ -80,6 +90,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // GradientCircularLoader(
+                                //     strokeWidth: 6.8,
+                                //     size: 54,
+                                //     leadingColor:
+                                //         Theme.of(context).brightness ==
+                                //                 Brightness.light
+                                //             ? AppColors.white
+                                //             : AppColors.n900,
+                                //     trailingColor: AppColors.primary300),
                                 Text(
                                   AppLocalizations.of(context)!.email,
                                   style: TextTheme.of(context).labelMedium,
@@ -254,6 +273,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             email: emailController.text.trim(),
                                             password: passwordController.text
                                                 .trim()));
+                                    context.push('/verifyPage');
                                   }
                                 },
                                 child: Text(

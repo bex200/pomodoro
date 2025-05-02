@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.example.pomodoro",
+            "sha256_cert_fingerprints": [
+                "14:0e:31:ec:3a:af:ad:1f:4c:cf:fb:41:52:ad:de:bf:29:c2:0c:d2:18:46:a7:5c:01:fe:8b:cb:eb:51:aa:83"
+            ]
+        }
+    }
+]

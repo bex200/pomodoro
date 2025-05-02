@@ -5,7 +5,7 @@ class AppTextStyles {
   static final logoLarge =
       GoogleFonts.dmSerifText(fontSize: 84, fontWeight: FontWeight.w400);
   static final serifh1 =
-      GoogleFonts.playfairDisplay(fontSize: 32, fontWeight: FontWeight.bold);
+      GoogleFonts.playfairDisplay(fontSize: 30, fontWeight: FontWeight.bold);
   static final headline1 =
       GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w600);
   static final headline2 =
@@ -122,6 +122,14 @@ class AppColors {
     begin: Alignment(-0.7, -0.7), // Gradient start at 46° angle (from top-left)
     end: Alignment(0.7, 0.7), // This defines the -16° angle
   );
+  static const LinearGradient primaryGradient4 = LinearGradient(
+    colors: [
+      Color(0xff6255F6),
+      Color(0xffD9D9D9),
+    ],
+    begin: Alignment(-0.7, -0.7), // Gradient start at 46° angle (from top-left)
+    end: Alignment(0.7, 0.7), // This defines the -16° angle
+  );
 
   // PASTEL
   static const Color pastelBlueLight = Color(0x93346CF6);
@@ -172,10 +180,10 @@ class AppThemes {
         labelLarge: AppTextStyles.button.copyWith(color: AppColors.n50),
         labelMedium: AppTextStyles.subtitle2,
         labelSmall: AppTextStyles.caption,
-        
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          disabledBackgroundColor: AppColors.primary200,
           foregroundColor: AppColors.white,
           backgroundColor: AppColors.primary400,
           textStyle: AppTextStyles.button,
@@ -265,6 +273,7 @@ class AppThemes {
                   BorderSide(color: AppColors.n800)))),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          disabledBackgroundColor: AppColors.primary200,
           foregroundColor: AppColors.white,
           backgroundColor: AppColors.primary300,
           textStyle: AppTextStyles.button,

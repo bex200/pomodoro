@@ -17,7 +17,7 @@ class SignUpWithEmailEvent extends AuthEvent {
   final String password;
   SignUpWithEmailEvent({required this.email, required this.password});
 }
-
+// class AuthEmailVerificationSent extends AuthEvent {}
 class SignInWithGoogleEvent extends AuthEvent {}
 
 class SignInWithAppleEvent extends AuthEvent {}

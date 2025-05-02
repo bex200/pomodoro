@@ -74,9 +74,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       SignUpWithEmailEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      // Sign up the user with email and password
       await _authRepository.signUpWithEmail(event.email, event.password);
-      final userId = await _authRepository.getUserId();
-      emit(AuthSuccess(userId!));
+
+      // Send email verification
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        // Send email verification link
+        await _authRepository.sendEmailVerification(event.email);
+      }
+
+      // Wait for the user to verify the email before proceeding
+      emit(AuthEmailVerificationSent());
+
+      // Optionally, you can guide the user to check their inbox
+      // For now, we just emit that email verification is sent
+      // You can use a separate state to notify that email is sent.
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_getEmailSignUpErrorMessage(e.code)));
     } catch (_) {
@@ -110,6 +123,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onForgotPassword(
       ForgotPasswordEvent event, Emitter<AuthState> emit) async {
+    print(event.email);
     emit(AuthLoading());
     try {
       await _authRepository.forgotPassword(event.email);

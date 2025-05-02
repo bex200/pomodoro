@@ -8,12 +8,18 @@ import 'package:pomodoro/logic/blocs/auth/auth_bloc.dart';
 import 'package:pomodoro/logic/blocs/auth/auth_event.dart';
 import 'package:pomodoro/logic/blocs/auth/auth_state.dart';
 
-class ForgotPasswordEmailScreen extends StatelessWidget {
+class ForgotPasswordEmailScreen extends StatefulWidget {
   const ForgotPasswordEmailScreen({super.key});
 
   @override
+  State<ForgotPasswordEmailScreen> createState() => _ForgotPasswordEmailScreenState();
+}
+
+class _ForgotPasswordEmailScreenState extends State<ForgotPasswordEmailScreen> {
+  TextEditingController emailController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController emailController = TextEditingController();
     GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {

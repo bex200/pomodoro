@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:app_links/app_links.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,8 @@ import 'package:pomodoro/presentation/screens/auth/forget_password_email.dart';
 import 'package:pomodoro/presentation/screens/auth/forgot_password_otp.dart';
 import 'package:pomodoro/presentation/screens/auth/login_screen.dart';
 import 'package:pomodoro/presentation/screens/auth/register_screen.dart';
+import 'package:pomodoro/presentation/screens/auth/verify_email_page.dart';
+import 'package:pomodoro/presentation/screens/auth/verify_handler_page.dart';
 import 'package:pomodoro/presentation/screens/home_screen.dart';
 import 'package:pomodoro/presentation/screens/onboarding/splash_screen.dart';
 import 'package:pomodoro/presentation/screens/onboarding/welcome1_screen.dart';
@@ -44,35 +48,60 @@ class AppRouter {
 
       // final isSplash = state.path == '/splash';
       final isLoggedIn = authState is AuthSuccess;
-      final isAuthProcess =
-          state.uri.path == '/login' || state.uri.path == '/register' || state.uri.path == '/forgotPasswordEmail';
+      final isAuthProcess = state.uri.path == '/login' ||
+          state.uri.path == '/register' ||
+          state.uri.path == '/forgotPasswordEmail';
+      final isVerifyProcess = state.uri.path == '/emailVerify';
       final onboardingProcess =
           state.uri.path == '/welcome1' || state.uri.path == '/welcome2';
-      
+
       final hasSeenOnboarding =
           await OnboardingRepository().hasSeenOnboarding();
       print(!isLoggedIn);
       print(!hasSeenOnboarding);
       print(state.uri.path);
-      if (!isLoggedIn && state.path == '/home') {
+      final user = FirebaseAuth.instance.currentUser;
+      await user?.reload(); //
+      await OnboardingRepository().markSeenOnboarding();
+      final isEmailVerify = state.uri.path == '/emailVerify';
+
+      if (!isLoggedIn && isEmailVerify) {
+        return null; // Let it through
+      }
+      if (user == null && state.uri.path == '/home') {
         return '/login';
       }
 
-      if (!isLoggedIn && !hasSeenOnboarding && authState is GoToAuthState && !onboardingProcess) {
-        print('IM IN WLCOME');
+      if (!isLoggedIn &&
+          !hasSeenOnboarding &&
+          authState is GoToAuthState &&
+          !onboardingProcess) {
         return '/welcome1';
       }
-     
-      if (!isLoggedIn && hasSeenOnboarding && authState is GoToAuthState && !isAuthProcess) {
-        print('IM IN REGISTER');
-        
+
+      if (!isLoggedIn &&
+          hasSeenOnboarding &&
+          authState is GoToAuthState &&
+          !isAuthProcess) {
         return '/register';
       }
-      if (!isLoggedIn && hasSeenOnboarding && authState is AuthInitial && !isAuthProcess) {
-        return '/login';
+
+      if (isLoggedIn && !user!.emailVerified) {
+        // This means the user has not verified their email yet
+        return '/register'; // Stay on the register screen
       }
 
-      if (isLoggedIn && isAuthProcess) {
+      if (!isLoggedIn &&
+          hasSeenOnboarding &&
+          authState is AuthInitial &&
+          !isAuthProcess) {
+        return '/login';
+      }
+      print(authState);
+      print((user?.emailVerified) ?? "No user yet");
+      if (isLoggedIn && isAuthProcess ||
+          isLoggedIn && state.uri.path == '/' ||
+          authState is AuthEmailVerificationSent && user!.emailVerified) {
         return '/home';
       }
 
@@ -104,6 +133,22 @@ class AppRouter {
             buildPageWithTransition(const RegisterScreen()),
       ),
       GoRoute(
+        path: '/verifyPage',
+        name: 'verifyPage',
+        builder: (context, state) {
+          return const VerifyEmailPromptPage();
+        },
+      ),
+      GoRoute(
+        path: '/emailVerify',
+        name: 'emailVerify',
+        builder: (context, state) {
+          final oobCode = state.uri.queryParameters['oobCode'];
+          return EmailVerificationHandlerPage(oobCode: oobCode);
+        },
+      ),
+
+      GoRoute(
         path: '/forgotPasswordEmail',
         pageBuilder: (context, state) =>
             buildPageWithTransition(const ForgotPasswordEmailScreen()),
@@ -120,4 +165,23 @@ class AppRouter {
       ),
     ],
   );
+  void listenToDynamicLinks(BuildContext context) {
+    final appLinks = AppLinks();
+
+    appLinks.uriLinkStream.listen((Uri? uri) async {
+      if (uri != null && uri.path == '/emailVerify') {
+        final user = FirebaseAuth.instance.currentUser;
+        await user?.reload(); // Reload user data from Firebase
+
+        if (user != null && user.emailVerified) {
+          // If user is verified, navigate to home
+          context.go('/home'); // GoRouter navigation
+        } else {
+          // Show error message or notification
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Email not verified yet. Please try again.")));
+        }
+      }
+    });
+  }
 }

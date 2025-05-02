@@ -39,5 +39,7 @@
   "passwordAtLeastOneDigit": "Password must have at least one digit",
   "passwordAtLeastOneSymbol": "Password must have at least one special character",
   
-  "formSubmitError": "Please fix the errors above before submitting"
+  "formSubmitError": "Please fix the errors above before submitting",
+  "loadingTitle": "Just a moment...",
+  "emailVerificationPrompt": "Just one more step! Check your inbox for a verification link and click it to complete your registration."
 }

@@ -20,6 +20,7 @@ void main() async {
   final authBloc = AuthBloc(authRepository);
   authBloc.add(AppStarted());
   final AppRouter appRouter = AppRouter(authBloc: authBloc);
+ 
 
   runApp(PomoApp(authBloc: authBloc, appRouter: appRouter));
 }
@@ -38,6 +39,7 @@ class _PomoAppState extends State<PomoApp> {
   @override
   void initState() {
     super.initState();
+    widget.appRouter.listenToDynamicLinks(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(

@@ -28,6 +28,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<void> sendEmailVerification(String email) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && !user.emailVerified) {
+      final ActionCodeSettings acs = ActionCodeSettings(
+        url:
+            'https://pomodoro-21.firebaseapp.com/emailVerify', // ✅ Custom deep link
+        handleCodeInApp: true,
+        iOSBundleId: 'com.example.pomodoro',
+        androidPackageName: 'com.example.pomodoro',
+        androidInstallApp: true,
+        androidMinimumVersion: '1',
+      );
+
+      await user.sendEmailVerification(acs);
+    }
+  }
+
+  @override
   Future<void> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -45,7 +63,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-   @override
+  @override
   Future<void> signInWithApple() async {
     try {
       final AuthorizationCredentialAppleID appleIDCredential =
@@ -69,7 +87,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await _firebaseAuth.signOut(); // Sign out from Firebase
+      await _googleSignIn.signOut(); // Sign out from Google Sign-In
+    } catch (e) {
+      print("Error signing out: $e");
+      throw Exception('Error signing out: $e');
+
+      // Handle the error (e.g., show an error message)
+    }
   }
 
   @override
